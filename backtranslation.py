@@ -55,7 +55,7 @@ def apply_back_translation(squad_dict, src_lang: str, tgt_lang: str):
 
     # progress bar for each paragraph starting at the prevoius count
     num_para = sum([len(article["paragraphs"]) for article in squad_dict])
-    progress_bar = tqdm(total=num_para, desc=f"Back Translating from {src_lang} to {tgt_lang}")
+    progress_bar = tqdm(total=num_para, initial= prev_count, desc=f"Backtranslating {src_lang} to {tgt_lang}")
 
     count = 0
     # start loop from the previous count
@@ -63,7 +63,7 @@ def apply_back_translation(squad_dict, src_lang: str, tgt_lang: str):
         for paragraph in article["paragraphs"]:
             if count < prev_count:
                 back_translate_paragraph(paragraph, src_lang, tgt_lang, tokenizer1, model1, tokenizer2, model2)
-            progress_bar.update(1)
+                progress_bar.update(1)
             count += 1
             if count % 10 == 0 and prev_count < count:
                 # create temp file to save progress
