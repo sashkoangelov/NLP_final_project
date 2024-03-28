@@ -61,7 +61,7 @@ def apply_back_translation(squad_dict, src_lang: str, tgt_lang: str):
     # start loop from the previous count
     for article in squad_dict:
         for paragraph in article["paragraphs"]:
-            if count < prev_count:
+            if count > prev_count:
                 back_translate_paragraph(paragraph, src_lang, tgt_lang, tokenizer1, model1, tokenizer2, model2)
                 progress_bar.update(1)
             count += 1
@@ -82,21 +82,56 @@ def merge_squad_datasets(squad_dict1, squad_dict2):
     return squad_dict1 + squad_dict2
 
 def back_translate(text: str, src_lang: str, tgt_lang: str, tokenizer1, model1, tokenizer2, model2):
-    # Add the source and target language code to the text
-    translated = model1.generate(**tokenizer1(">>" + src_lang + "<< " + text, return_tensors="pt", padding=True).to(device))
+    # If the text is too long, split it into sentences
+    if len(text) > 500:
+        sentences = text.split('. ')
+        translated_sentences = []
+        for sentence in sentences:
+            # If the sentence is too long, split it into chunks of 500 characters each
+            if len(sentence) > 500:
+                sentence_chunks = [sentence[i:i+500] for i in range(0, len(sentence), 500)]
+                for sentence_chunk in sentence_chunks:
+                    translated_sentence_chunk = translate_and_back(sentence_chunk, src_lang, tgt_lang, tokenizer1, model1, tokenizer2, model2)
+                    translated_sentences.append(translated_sentence_chunk)
+            else:
+                translated_sentence = translate_and_back(sentence, src_lang, tgt_lang, tokenizer1, model1, tokenizer2, model2)
+                translated_sentences.append(translated_sentence)
 
-    # decode the translated text
+        # Combine all the translated sentences into a single string
+        translated_text = '. '.join(translated_sentences)
+    else:
+        # Translate the text directly
+        translated_text = translate_and_back(text, src_lang, tgt_lang, tokenizer1, model1, tokenizer2, model2)
+
+    return translated_text
+
+def translate_and_back(text: str, src_lang: str, tgt_lang: str, tokenizer1, model1, tokenizer2, model2):
+    # Add the source and target language code to the text
+    encoded_text = tokenizer1.encode_plus(">>" + src_lang + "<< " + text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+    input_ids = encoded_text["input_ids"].to(device)
+    attention_mask = encoded_text["attention_mask"].to(device)
+
+    # Generate translation using model1
+    translated = model1.generate(input_ids=input_ids, attention_mask=attention_mask)
+
+    # Decode the translated text
     text_array = [tokenizer1.decode(t, skip_special_tokens=True) for t in translated]
 
-    # combine array into single string
+    # Combine array into single string
     translated_text = ' '.join(text_array)
 
-    # back translate the text
-    translated = model2.generate(**tokenizer2(">>" + tgt_lang + "<< " + translated_text, return_tensors="pt", padding=True).to(device))
+    # Back translate the text
+    encoded_translated_text = tokenizer2.encode_plus(">>" + tgt_lang + "<< " + translated_text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+    input_ids = encoded_translated_text["input_ids"].to(device)
+    attention_mask = encoded_translated_text["attention_mask"].to(device)
 
-    # decode the translated text
+    # Generate back translation using model2
+    translated = model2.generate(input_ids=input_ids, attention_mask=attention_mask)
+
+    # Decode the back translated text
     text_array = [tokenizer2.decode(t, skip_special_tokens=True) for t in translated]
-    # combine array into single string
+
+    # Combine array into single string
     text = ' '.join(text_array)
     return text
 
