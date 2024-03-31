@@ -137,7 +137,7 @@ def translate_and_back(text: str, src_lang: str, tgt_lang: str, tokenizer1, mode
 
 if __name__ == "__main__": 
     # Load the SQuAD dataset
-    squad_dataset = load_squad_dataset("dataset/train-v2.0.json")
+    squad_dataset = load_squad_dataset("./dataset/train-v2.0.json")
 
     # Apply back translation to the dataset using Google Translate into 5 different languages
     for lang in ["fr", "de"]:#, "es", "zh", "ja"]:
