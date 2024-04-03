@@ -89,8 +89,10 @@ def prepare_validation_features(examples):
 
     return tokenized_examples
 
-model = RobertaForQuestionAnswering.from_pretrained("roberta-base")
-model.load_state_dict(torch.load('C:/Users/Admin/Downloads/second.pth'))
+
+
+#load model from C:/Users/Admin/Downloads/second.pth
+model = torch.load("C:/Users/Admin/Downloads/model2_backtranslation_overlapV2.pth")
 
 """#Evaluation"""
 # generate predictions and save them to a json file for evaluation using the official SQuAD evaluation script
@@ -178,10 +180,9 @@ def postprocess_qa_predictions(examples, features, raw_predictions, n_best_size 
             # In the very rare edge case we have not a single non-null prediction, we create a fake prediction to avoid
             # failure.
             best_answer = {"text": "", "score": 0.0}
-        
+
         # Let's pick our final answer: the best one or the null answer (only for squad_v2)
         predictions[examples["id"][example_index]] = best_answer["text"]
-
 
     return predictions
 
@@ -196,6 +197,7 @@ validation_features.set_format(type=validation_features.format["type"], columns=
 raw_predictions = trainer.predict(validation_features)
 
 final_predictions = postprocess_qa_predictions(validation, validation_features, raw_predictions.predictions)
+
 
 # save the predictions to a json file
 with open("predictions.json", "w") as f:
