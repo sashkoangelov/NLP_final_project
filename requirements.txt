@@ -1,0 +1,3 @@
+# packages in environment at C:\Users\oeg17\miniconda3\envs\backtranslation:
+#
+# Name                    Version                   Build  Channel

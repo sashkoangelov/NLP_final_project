@@ -27,11 +27,9 @@ import json
 import collections
 from tqdm.auto import tqdm
 
-print(transformers.__version__)
-
 """#Data loading"""
 
-validation = pd.read_parquet("C:/Users/Admin/Downloads/NLP_final_project/validation-00000-of-00001.parquet")
+validation = pd.read_parquet("...path/to/.../validation-00000-of-00001.parquet")
 
 """# Data pre-processing"""
 
@@ -90,9 +88,8 @@ def prepare_validation_features(examples):
     return tokenized_examples
 
 
-
-#load model from C:/Users/Admin/Downloads/second.pth
-model = torch.load("C:/Users/Admin/Downloads/model2_backtranslation_overlapV2.pth")
+# Use map_location=torch.device('cpu') if you don't have a GPU
+model = torch.load("...path/to/.../model.pth")
 
 """#Evaluation"""
 # generate predictions and save them to a json file for evaluation using the official SQuAD evaluation script
@@ -186,16 +183,19 @@ def postprocess_qa_predictions(examples, features, raw_predictions, n_best_size 
 
     return predictions
 
+# load the validation dataset
 validation_hf = Dataset.from_pandas(validation)
 
+# prepare the validation features
 validation_features = validation_hf.map(prepare_validation_features, batched=True, remove_columns=validation_hf.column_names)
 
-
+# set the format of the validation features
 validation_features.set_format(type=validation_features.format["type"], columns=list(validation_features.features.keys()))
 
-
+# make predictions on the validation set
 raw_predictions = trainer.predict(validation_features)
 
+# postprocess the predictions
 final_predictions = postprocess_qa_predictions(validation, validation_features, raw_predictions.predictions)
 
 
