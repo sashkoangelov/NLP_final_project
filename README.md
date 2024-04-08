@@ -65,4 +65,7 @@ To utilize this script, consider the following:
    - The script generates predictions for the validation set using the trained model.
    - Predictions are saved to a JSON file named `predictions.json`.
 
+#### Acknowledgement:
+Parts of this script have been adopted from the example provided by Hugging Face, available at [this link](https://github.com/huggingface/notebooks/blob/main/examples/question_answering.ipynb).
+
 
