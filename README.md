@@ -65,7 +65,7 @@ To utilize this script, consider the following:
    - The script generates predictions for the validation set using the trained model.
    - Predictions are saved to a JSON file named `predictions.json`.
 
-### 'model2_overlap.ipynb' & 'model2_backtranslation_overlap.ipynb' 
+### 'model2_overlap.ipynb & model2_backtranslation_overlap.ipynb' 
 
 In these interactive python notebooks we fine-tune 'roberta-base' on the SQuAD 2.0 (+ the back translated SQuAD 2.0) handling longer contexts appropriately.
 
