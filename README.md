@@ -65,6 +65,29 @@ To utilize this script, consider the following:
    - The script generates predictions for the validation set using the trained model.
    - Predictions are saved to a JSON file named `predictions.json`.
 
+### 'model2_overlap.ipynb' & 'model2_backtranslation_overlap.ipynb' 
+
+In these interactive python notebooks we fine-tune 'roberta-base' on the SQuAD 2.0 (+ the back translated SQuAD 2.0) handling longer contexts appropriately.
+
+#### Usage:
+To utilize this script, consider the following:
+
+1. **Requirements:**
+   - Ensure you have enough compute power.
+
+2. **Data Preparation:**
+   - Ensure you have the data uploaded on a drive.
+
+3. **Adjust Paths:**
+   - Adjust the paths for the data and where the model is saved.
+
+4. **Execution:**
+   - Run the cells one by onein the given order.
+
+#### Output:
+   - The final product for each notebook is a fine-tuned model saved to your deisred location.
+
+
 #### Acknowledgement:
 Parts of this script have been adopted from the example provided by Hugging Face, available at [this link](https://github.com/huggingface/notebooks/blob/main/examples/question_answering.ipynb).
 
